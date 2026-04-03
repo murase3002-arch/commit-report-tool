@@ -1,0 +1,12 @@
+{
+  "name": "comi-neko",
+  "version": "1.0.0",
+  "description": "GitHubコミットをAIで分析・図解し、Slackに自動投稿するツール",
+  "private": true,
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "playwright": "^1.57.0"
+  }
+}

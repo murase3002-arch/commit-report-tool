@@ -1,0 +1,31 @@
+# ============================================================
+# プロジェクト設定
+# レポートの対象範囲と通知先を定義します
+# ============================================================
+
+project:
+  name: "開発レポート"         # ← Slack に表示されるプロジェクト名
+  description: "日次コミットレポート"
+
+# どのリポジトリ定義を使うか（configs/ からの相対パス）
+repo_config: "repos/your-repo.yml"
+
+# レポートに含めるアプリ（repos/*.yml の id を指定）
+# 不要なアプリは行ごと削除してください
+include_apps:
+  - frontend
+  - api
+  - docs
+
+# Slack 設定（環境変数名を指定。値は GitHub Secrets に登録する）
+slack:
+  token_env: SLACK_BOT_TOKEN
+  channel_env: SLACK_CHANNEL
+  channel_name: "#your-channel"  # ← 参考用（実際の投稿先は Secrets の値で決まる）
+
+# レポート対象メンバー（空 = 全員対象）
+target_authors: []
+
+# ワンポイントTIPS（変更内容に関連する豆知識を自動生成）
+tips:
+  enabled: true

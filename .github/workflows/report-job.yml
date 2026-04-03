@@ -1,0 +1,120 @@
+name: Report Job (Reusable)
+
+on:
+  workflow_call:
+    inputs:
+      project_name:
+        description: 'プロジェクト名（表示用）'
+        required: true
+        type: string
+      config_file:
+        description: '設定ファイルパス'
+        required: true
+        type: string
+      debug_channel:
+        description: 'デバッグ用チャンネルID（指定時はこちらに投稿）'
+        required: false
+        type: string
+        default: ''
+      target_date:
+        description: '対象日（YYYY-MM-DD形式、省略時は前日）'
+        required: false
+        type: string
+        default: ''
+    secrets:
+      ANTHROPIC_API_KEY:
+        required: true
+      GH_TOKEN:
+        required: true
+      SLACK_BOT_TOKEN:
+        required: true
+      SLACK_CHANNEL:
+        required: true
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        id: checkout
+
+      - name: Install Japanese fonts
+        id: fonts
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y fonts-noto-cjk
+
+      - name: Setup Node.js
+        id: node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Playwright
+        id: playwright
+        run: |
+          npm ci
+          npx playwright install chromium
+
+      - name: Read prompt file
+        id: read-prompt
+        run: |
+          {
+            echo 'content<<EOF'
+            cat .claude/prompts/daily-report.md
+            echo ''
+            echo '## 設定ファイル'
+            echo '${{ inputs.config_file }} を使用してください。'
+            echo 'EOF'
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Run Claude Code
+        id: claude
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          github_token: ${{ secrets.GH_TOKEN }}
+          prompt: ${{ steps.read-prompt.outputs.content }}
+          claude_args: "--allowedTools 'Bash,Read,Write,Edit,Glob,Grep,Skill,TodoWrite'"
+          show_full_output: true  # 常に詳細ログを出力（原因特定用）
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+          SLACK_CHANNEL: ${{ inputs.debug_channel != '' && inputs.debug_channel || secrets.SLACK_CHANNEL }}
+          TARGET_DATE: ${{ inputs.target_date }}
+
+      - name: Notify failure to Slack
+        if: failure()
+        # このステップは GitHub Actions のシェルで実行されるため curl を使用。
+        # CLAUDE.md の「curl 禁止」は Claude Code エージェント向けのルールです。
+        run: |
+          # 失敗したステップを特定
+          FAILED_STEP=""
+          if [[ "${{ steps.checkout.outcome }}" == "failure" ]]; then
+            FAILED_STEP="チェックアウト"
+          elif [[ "${{ steps.fonts.outcome }}" == "failure" ]]; then
+            FAILED_STEP="日本語フォントのインストール"
+          elif [[ "${{ steps.node.outcome }}" == "failure" ]]; then
+            FAILED_STEP="Node.jsのセットアップ"
+          elif [[ "${{ steps.playwright.outcome }}" == "failure" ]]; then
+            FAILED_STEP="Playwrightのインストール"
+          elif [[ "${{ steps.read-prompt.outcome }}" == "failure" ]]; then
+            FAILED_STEP="プロンプトファイルの読み込み"
+          elif [[ "${{ steps.claude.outcome }}" == "failure" ]]; then
+            FAILED_STEP="Claude Codeの実行"
+          else
+            FAILED_STEP="不明なステップ"
+          fi
+
+          curl -X POST "https://slack.com/api/chat.postMessage" \
+            -H "Authorization: Bearer $SLACK_BOT_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "channel": "'"${SLACK_CHANNEL:-YOUR_DEBUG_CHANNEL_ID}"'",
+              "text": ":x: *コミネコ エラー発生*\n\nプロジェクト: ${{ inputs.project_name }}\n失敗箇所: '"$FAILED_STEP"'\nワークフロー実行: <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|詳細を確認>"
+            }'
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+          SLACK_CHANNEL: ${{ inputs.debug_channel != '' && inputs.debug_channel || secrets.SLACK_CHANNEL }}

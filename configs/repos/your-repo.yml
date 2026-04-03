@@ -1,0 +1,42 @@
+# ============================================================
+# リポジトリ構造定義
+# あなたのリポジトリに合わせて書き換えてください
+# ============================================================
+
+repository:
+  owner: your-username        # ← あなたの GitHub ユーザー名（または Organization 名）
+  name: your-web-app          # ← 監視したいリポジトリ名
+
+# リポジトリ内のアプリ/ディレクトリを定義
+# モノレポでない場合は1つだけ定義すればOK
+apps:
+  - id: frontend              # 一意のID（プロジェクト設定から参照する）
+    path: "src/"              # ← コミットを分類するディレクトリパス
+    name: "Webサイト"          # ← レポートに表示される名前（自分のアプリ名に変更）
+    short_name: "Web"         # ← タグに表示される短縮名
+    icon: "globe"             # Lucide アイコン名
+    color: "blue"             # Tailwind CSS の色名
+    category: "main"
+
+  - id: api
+    path: "api/"
+    name: "APIサーバー"
+    short_name: "API"
+    icon: "database"
+    color: "emerald"
+    category: "main"
+
+  # 不要なアプリ定義は削除してください
+  - id: docs
+    path: "docs/"
+    name: "ドキュメント"
+    short_name: "Docs"
+    icon: "book-open"
+    color: "purple"
+    category: "docs"
+
+categories:
+  main:
+    name: "メインアプリ"
+  docs:
+    name: "ドキュメント"

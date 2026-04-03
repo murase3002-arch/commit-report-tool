@@ -1,0 +1,31 @@
+name: Daily Commit Report
+
+on:
+  schedule:
+    # - cron: '0 22 * * *'  # 毎日7:00 JST（有効にするにはコメントを外す）
+  workflow_dispatch:
+    inputs:
+      debug:
+        description: 'デバッグモード（テスト用チャンネルに投稿）'
+        required: false
+        default: false
+        type: boolean
+      target_date:
+        description: '対象日（YYYY-MM-DD、省略時は前日）'
+        required: false
+        default: ''
+        type: string
+
+jobs:
+  report:
+    uses: ./.github/workflows/report-job.yml
+    with:
+      project_name: your-project
+      config_file: configs/projects/your-project.yml
+      debug_channel: ${{ github.event.inputs.debug == 'true' && 'YOUR_DEBUG_CHANNEL_ID' || '' }}
+      target_date: ${{ github.event.inputs.target_date }}
+    secrets:
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      GH_TOKEN: ${{ secrets.GH_TOKEN }}
+      SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+      SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}

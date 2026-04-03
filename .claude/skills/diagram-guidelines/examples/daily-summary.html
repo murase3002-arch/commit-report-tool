@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>今日の開発</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', sans-serif; }
+    .line-clamp-2 {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+  </style>
+</head>
+<body class="bg-white p-4">
+  <div class="w-[420px] h-[650px] mx-auto flex flex-col">
+
+    <!--
+      ============================================================
+      daily-summary: overview と summary を統合したページ
+
+      目的: 「今日何があったか」を1枚で伝える
+
+      構成:
+      1. ヘッダー（タイトル + 日付）
+      2. 統計（commits / branches / contributors）
+      3. ハイライト（誰が何をしたか、最大4件）
+      4. フッター（コントリビューター一覧）
+
+      ⚠️ ブランチの詳細リストは不要（branch-summaryで見れる）
+      ============================================================
+    -->
+
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-4">
+      <div class="flex items-center gap-2">
+        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center">
+          <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+          </svg>
+        </div>
+        <div>
+          <h1 class="text-base font-semibold text-slate-900">今日の開発</h1>
+          <p class="text-xs text-slate-500">{repository_name}</p>
+        </div>
+      </div>
+      <div class="text-sm font-medium text-slate-700">{date}</div>
+    </div>
+
+    <!-- Stats -->
+    <div class="flex items-center justify-center gap-6 py-3 mb-4 bg-gradient-to-r from-violet-50 to-purple-50 rounded-lg border border-violet-100">
+      <div class="text-center">
+        <div class="text-xl font-bold text-violet-700">{total_commits}</div>
+        <div class="text-xs text-slate-500">commits</div>
+      </div>
+      <div class="w-px h-8 bg-violet-200"></div>
+      <div class="text-center">
+        <div class="text-xl font-bold text-violet-700">{branch_count}</div>
+        <div class="text-xs text-slate-500">branches</div>
+      </div>
+      <div class="w-px h-8 bg-violet-200"></div>
+      <div class="text-center">
+        <div class="text-xl font-bold text-violet-700">{contributor_count}</div>
+        <div class="text-xs text-slate-500">contributors</div>
+      </div>
+    </div>
+
+    <!-- Highlights Section -->
+    <div class="flex-1 overflow-hidden">
+      <div class="flex items-center gap-2 mb-3">
+        <svg class="w-5 h-5 text-amber-500" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
+        </svg>
+        <span class="text-sm font-semibold text-slate-900">ハイライト</span>
+      </div>
+
+      <!--
+        ============================================================
+        ハイライトカード（繰り返し、最大4件）
+        ============================================================
+
+        各カードに必須の情報:
+        - avatar_url: GitHub APIから取得 (author.avatar_url)
+        - username: GitHub APIから取得 (author.login)
+        - branch_name: どのブランチへのコミットか
+        - description: ビジネス視点での説明
+
+        ブランチタグの色:
+        - デフォルトブランチ: bg-green-100 text-green-700, ドット bg-green-500
+        - fix/*: bg-orange-100 text-orange-700, ドット bg-orange-500
+        - docs/*: bg-purple-100 text-purple-700, ドット bg-purple-500
+        - その他: bg-blue-100 text-blue-700, ドット bg-blue-500
+
+        ⚠️ ラベルは常にブランチ名をそのまま表示
+
+        ============================================================
+        ⚠️⚠️⚠️ 重要: アバターとユーザー名の紐付けルール ⚠️⚠️⚠️
+        ============================================================
+
+        各ハイライトカードの avatar_url と username は
+        **必ず同一のコミット/authorオブジェクトから取得すること**
+
+        ✅ 正しい例:
+           commit.author.avatar_url と commit.author.login を同時に使用
+
+        ❌ 間違い例:
+           avatars配列[i] と usernames配列[i] を別々に取得して組み合わせ
+           → インデックスがズレてアバターとユーザー名が不一致になる
+
+        ============================================================
+      -->
+      <div class="space-y-2.5">
+
+        <!-- Highlight Card 1 -->
+        <div class="p-3 bg-amber-50 rounded-lg border border-amber-100">
+          <div class="flex items-center justify-between mb-2">
+            <div class="flex items-center gap-2">
+              <!-- ⚠️ src は author.avatar_url から取得 -->
+              <img src="{avatar_url}" class="w-7 h-7 rounded-full" alt="">
+              <span class="text-sm font-medium text-slate-900">{username}</span>
+            </div>
+            <!-- ブランチタグ -->
+            <div class="flex items-center gap-1 px-2 py-0.5 bg-green-100 rounded text-xs text-green-700">
+              <div class="w-1.5 h-1.5 rounded-full bg-green-500"></div>
+              <span>{branch_name}</span>
+            </div>
+          </div>
+          <div class="text-sm text-slate-700 leading-relaxed line-clamp-2">{highlight_description}</div>
+        </div>
+
+        <!-- Highlight Card 2 -->
+        <div class="p-3 bg-amber-50 rounded-lg border border-amber-100">
+          <div class="flex items-center justify-between mb-2">
+            <div class="flex items-center gap-2">
+              <img src="{avatar_url}" class="w-7 h-7 rounded-full" alt="">
+              <span class="text-sm font-medium text-slate-900">{username}</span>
+            </div>
+            <div class="flex items-center gap-1 px-2 py-0.5 bg-blue-100 rounded text-xs text-blue-700">
+              <div class="w-1.5 h-1.5 rounded-full bg-blue-500"></div>
+              <span>{branch_name}</span>
+            </div>
+          </div>
+          <div class="text-sm text-slate-700 leading-relaxed line-clamp-2">{highlight_description}</div>
+        </div>
+
+        <!-- Highlight Card 3 -->
+        <div class="p-3 bg-amber-50 rounded-lg border border-amber-100">
+          <div class="flex items-center justify-between mb-2">
+            <div class="flex items-center gap-2">
+              <img src="{avatar_url}" class="w-7 h-7 rounded-full" alt="">
+              <span class="text-sm font-medium text-slate-900">{username}</span>
+            </div>
+            <div class="flex items-center gap-1 px-2 py-0.5 bg-green-100 rounded text-xs text-green-700">
+              <div class="w-1.5 h-1.5 rounded-full bg-green-500"></div>
+              <span>{branch_name}</span>
+            </div>
+          </div>
+          <div class="text-sm text-slate-700 leading-relaxed line-clamp-2">{highlight_description}</div>
+        </div>
+
+        <!-- Highlight Card 4 -->
+        <div class="p-3 bg-amber-50 rounded-lg border border-amber-100">
+          <div class="flex items-center justify-between mb-2">
+            <div class="flex items-center gap-2">
+              <img src="{avatar_url}" class="w-7 h-7 rounded-full" alt="">
+              <span class="text-sm font-medium text-slate-900">{username}</span>
+            </div>
+            <div class="flex items-center gap-1 px-2 py-0.5 bg-blue-100 rounded text-xs text-blue-700">
+              <div class="w-1.5 h-1.5 rounded-full bg-blue-500"></div>
+              <span>{branch_name}</span>
+            </div>
+          </div>
+          <div class="text-sm text-slate-700 leading-relaxed line-clamp-2">{highlight_description}</div>
+        </div>
+
+        <!-- 4件を超える場合 -->
+        <!-- <div class="text-center text-xs text-slate-400 py-1">+{N} more highlights</div> -->
+
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <!--
+      ⚠️ フッターのアバター一覧も同様のルール:
+      各 contributor オブジェクトから avatar_url と login をペアで取得
+      別々のリストから組み合わせない
+    -->
+    <div class="border-t border-slate-200 pt-3 mt-3">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <div class="flex -space-x-2">
+            <img src="{avatar_url_1}" class="w-6 h-6 rounded-full border-2 border-white" alt="">
+            <img src="{avatar_url_2}" class="w-6 h-6 rounded-full border-2 border-white" alt="">
+            <img src="{avatar_url_3}" class="w-6 h-6 rounded-full border-2 border-white" alt="">
+          </div>
+          <!-- 例: "user-a(5) user-b(3)" -->
+          <span class="text-xs text-slate-500">{contributor_summary}</span>
+        </div>
+        <div class="text-xs text-slate-400">Generated by Claude Code</div>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>

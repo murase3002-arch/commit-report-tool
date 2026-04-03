@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>タイムライン</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', sans-serif; }
+    .line-clamp-2 {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+  </style>
+</head>
+<body class="bg-white p-4">
+  <div class="w-[420px] h-[650px] mx-auto flex flex-col">
+
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-4">
+      <div class="flex items-center gap-2">
+        <div class="w-8 h-8 rounded-lg bg-slate-900 flex items-center justify-center">
+          <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+          </svg>
+        </div>
+        <div>
+          <h1 class="text-base font-semibold text-slate-900">タイムライン</h1>
+          <p class="text-xs text-slate-500">your-web-app</p>
+        </div>
+      </div>
+      <div class="text-sm font-medium text-slate-700">1/15 - 16</div>
+    </div>
+
+    <!-- Timeline (max 4 entries to fit 600px height) -->
+    <div class="relative flex-1">
+      <div class="absolute left-[7px] top-2 bottom-2 w-0.5 bg-slate-200"></div>
+
+      <div class="space-y-2.5">
+
+        <!--
+          ============================================================
+          ⚠️⚠️⚠️ 重要: アバターとユーザー名の紐付けルール ⚠️⚠️⚠️
+          ============================================================
+
+          各エントリの avatar_url と username は
+          **必ず同一のコミット/authorオブジェクトから取得すること**
+
+          ✅ 正しい: commit.author.avatar_url + commit.author.login
+          ❌ 間違い: avatars[i] + usernames[i] （別リストからの組み合わせ）
+
+          author.avatar_url = アバター画像URL
+          author.login = GitHubユーザー名
+          ============================================================
+        -->
+
+        <!--
+          タイムラインエントリ（繰り返し、最大4件）
+          ブランチタグの色（デフォルトブランチかどうかで判定）:
+          - デフォルトブランチ: bg-green-100 text-green-700, ドット bg-green-500
+          - fix/*: bg-orange-100 text-orange-700, ドット bg-orange-500
+          - docs/*: bg-purple-100 text-purple-700, ドット bg-purple-500
+          - その他全て: bg-blue-100 text-blue-700, ドット bg-blue-500
+
+          ⚠️ ラベルは常にブランチ名をそのまま表示（main, feature/xxx, fix/xxx等）
+          ⚠️ avatar_url と username は必ずGitHub APIから取得
+        -->
+        <div class="relative pl-6">
+          <div class="absolute left-0 top-1.5 w-4 h-4 rounded-full bg-blue-500 border-2 border-white"></div>
+          <div class="bg-slate-50 rounded-lg p-2.5 border border-slate-100">
+            <div class="flex items-center justify-between mb-1">
+              <div class="flex items-center gap-2">
+                <!-- src must be author.avatar_url from API -->
+                <img src="{avatar_url}" class="w-5 h-5 rounded-full" alt="">
+                <span class="text-xs font-medium text-slate-700">{username}</span>
+              </div>
+              <!-- ブランチタグ -->
+              <div class="flex items-center gap-1 px-1.5 py-0.5 bg-blue-100 rounded text-xs text-blue-600">
+                <div class="w-1.5 h-1.5 rounded-full bg-blue-500"></div>
+                <span>{branch_name}</span>
+              </div>
+            </div>
+            <div class="text-sm text-slate-800">{commit_description}</div>
+            <div class="flex items-center justify-between mt-1.5">
+              <div class="flex items-center gap-1.5">
+                <span class="text-xs text-slate-400">{app_name}</span>
+              </div>
+              <span class="text-xs text-slate-400">{time}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 以下同様のエントリを最大4件まで繰り返し -->
+        <!-- 4件を超える場合はページ分割: timeline-{branch}-2.png -->
+
+      </div>
+    </div>
+
+    <!-- More indicator (4件を超える場合) -->
+    <div class="text-center py-2 text-xs text-slate-400">
+      +{remaining_commits} more commits
+    </div>
+
+    <!-- Footer - ブランチ凡例（色のみ） -->
+    <div class="border-t border-slate-200 pt-3">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <span class="flex items-center gap-1 text-xs text-green-600"><span class="w-2 h-2 rounded-full bg-green-500"></span>デフォルト</span>
+          <span class="flex items-center gap-1 text-xs text-blue-600"><span class="w-2 h-2 rounded-full bg-blue-500"></span>作業</span>
+          <span class="flex items-center gap-1 text-xs text-orange-600"><span class="w-2 h-2 rounded-full bg-orange-500"></span>fix</span>
+        </div>
+        <div class="text-xs text-slate-400">Generated by Claude Code</div>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>

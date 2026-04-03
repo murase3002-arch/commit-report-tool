@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>アプリ別レポート</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', sans-serif; }
+    .line-clamp-2 {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+  </style>
+</head>
+<body class="bg-white p-4">
+  <div class="w-[420px] h-[650px] mx-auto flex flex-col">
+
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-4">
+      <div class="flex items-center gap-2">
+        <div class="w-8 h-8 rounded-lg bg-slate-900 flex items-center justify-center">
+          <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+          </svg>
+        </div>
+        <div>
+          <h1 class="text-base font-semibold text-slate-900">アプリ別レポート</h1>
+          <p class="text-xs text-slate-500">your-web-app</p>
+        </div>
+      </div>
+      <div class="text-sm font-medium text-slate-700">1/15 - 16</div>
+    </div>
+
+    <!-- App Section: Webサイト -->
+    <div class="mb-4">
+      <div class="flex items-center gap-2 mb-3">
+        <div class="w-6 h-6 rounded-lg bg-blue-500 flex items-center justify-center">
+          <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+          </svg>
+        </div>
+        <div class="text-sm font-semibold text-slate-900">Webサイト</div>
+        <div class="text-xs text-slate-400">(web/)</div>
+        <div class="flex-1 h-px bg-slate-200 ml-2"></div>
+      </div>
+
+      <!--
+        変更カード（繰り返し）
+        ブランチタグの色（デフォルトブランチかどうかで判定）:
+        - デフォルトブランチ: bg-green-100 text-green-700, ドット bg-green-500
+        - fix/*: bg-orange-100 text-orange-700, ドット bg-orange-500
+        - docs/*: bg-purple-100 text-purple-700, ドット bg-purple-500
+        - その他全て: bg-blue-100 text-blue-700, ドット bg-blue-500
+
+        ⚠️ ラベルは常にブランチ名をそのまま表示（main, feature/xxx, fix/xxx等）
+      -->
+      <div class="space-y-1.5 pl-2 border-l-2 border-blue-200">
+        <div class="flex items-start gap-2 p-2 bg-slate-50 rounded">
+          <!-- ブランチタグ -->
+          <div class="flex items-center gap-1 px-1.5 py-0.5 bg-blue-100 rounded text-xs text-blue-600 flex-shrink-0">
+            <div class="w-1.5 h-1.5 rounded-full bg-blue-500"></div>
+            <span>{branch_short_name}</span>
+          </div>
+          <span class="text-sm text-slate-700">{change_description}</span>
+        </div>
+        <!-- 5件を超える場合は省略 -->
+        <!-- <div class="flex items-center gap-2 pl-2 text-xs text-slate-400"><span>+N more commits</span></div> -->
+      </div>
+      <!--
+        ⚠️⚠️⚠️ 重要: アバターとユーザー名の紐付けルール ⚠️⚠️⚠️
+        各 contributor の avatar_url と login は必ずペアで取得
+        別々のリストから組み合わせない
+      -->
+      <div class="flex items-center gap-2 mt-2 pl-2">
+        <div class="flex -space-x-1">
+          <!-- 各 contributor オブジェクトから avatar_url を取得 -->
+          <img src="{contributor1.avatar_url}" class="w-4 h-4 rounded-full border border-white" alt="">
+          <img src="{contributor2.avatar_url}" class="w-4 h-4 rounded-full border border-white" alt="">
+        </div>
+        <!-- 同じ contributor オブジェクトから login を取得 -->
+        <span class="text-xs text-slate-400">{contributor1.login}, {contributor2.login}</span>
+      </div>
+    </div>
+
+    <!-- App Section: APIサーバー -->
+    <div class="mb-4">
+      <div class="flex items-center gap-2 mb-3">
+        <div class="w-6 h-6 rounded-lg bg-purple-500 flex items-center justify-center">
+          <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z"/>
+          </svg>
+        </div>
+        <div class="text-sm font-semibold text-slate-900">APIサーバー</div>
+        <div class="text-xs text-slate-400">(api/)</div>
+        <div class="flex-1 h-px bg-slate-200 ml-2"></div>
+      </div>
+
+      <!-- 同様のブランチタグ付きカード -->
+      <div class="space-y-1.5 pl-2 border-l-2 border-purple-200">
+        <div class="flex items-start gap-2 p-2 bg-slate-50 rounded">
+          <div class="flex items-center gap-1 px-1.5 py-0.5 bg-green-100 rounded text-xs text-green-600 flex-shrink-0">
+            <div class="w-1.5 h-1.5 rounded-full bg-green-500"></div>
+            <span>main</span>
+          </div>
+          <span class="text-sm text-slate-700">{change_description}</span>
+        </div>
+      </div>
+      <!-- 同様: contributor オブジェクトから avatar_url と login をペアで取得 -->
+      <div class="flex items-center gap-2 mt-2 pl-2">
+        <div class="flex -space-x-1">
+          <img src="{contributor.avatar_url}" class="w-4 h-4 rounded-full border border-white" alt="">
+        </div>
+        <span class="text-xs text-slate-400">{contributor.login}</span>
+      </div>
+    </div>
+
+    <!-- Footer - ブランチ凡例（色のみ） -->
+    <div class="border-t border-slate-200 pt-3">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <span class="flex items-center gap-1 text-xs text-green-600"><span class="w-2 h-2 rounded-full bg-green-500"></span>デフォルト</span>
+          <span class="flex items-center gap-1 text-xs text-blue-600"><span class="w-2 h-2 rounded-full bg-blue-500"></span>作業</span>
+          <span class="flex items-center gap-1 text-xs text-orange-600"><span class="w-2 h-2 rounded-full bg-orange-500"></span>fix</span>
+        </div>
+        <div class="text-xs text-slate-400">Generated by Claude Code</div>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>
