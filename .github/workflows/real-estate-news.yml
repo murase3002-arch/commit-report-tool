@@ -1,0 +1,31 @@
+name: Real Estate News Email
+
+on:
+  schedule:
+    - cron: '0 22 * * *'  # 毎日 7:00 JST
+  workflow_dispatch:       # 手動実行ボタン
+
+jobs:
+  send-news:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install --no-save @anthropic-ai/sdk nodemailer
+
+      - name: Send news email
+        run: node scripts/real-estate-news.js
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GMAIL_USER:        ${{ secrets.GMAIL_USER }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+          NEWS_TO_EMAIL:     ${{ secrets.NEWS_TO_EMAIL }}

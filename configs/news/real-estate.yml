@@ -1,0 +1,20 @@
+# 不動産ニュースメール設定
+
+email:
+  to: murase3002@gmail.com
+
+keywords:
+  - 不動産
+  - 住宅ローン
+  - 地価
+  - マンション 販売
+  - 賃貸 市場
+  - 中古住宅
+  - 新築住宅
+  - REIT 不動産
+  - 空き家
+  - 不動産投資
+
+news:
+  max_articles: 10
+  per_keyword: 5
