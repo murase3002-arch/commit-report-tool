@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>不動産ニュースメール - システム図解</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', sans-serif; }
+  </style>
+</head>
+<body class="bg-white p-4">
+  <div class="w-[420px] mx-auto flex flex-col gap-3">
+
+    <!-- Header -->
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center">
+          <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+          </svg>
+        </div>
+        <div>
+          <h1 class="text-base font-semibold text-slate-900">不動産ニュースメール</h1>
+          <p class="text-xs text-slate-500">システム構成</p>
+        </div>
+      </div>
+      <div class="text-sm font-medium text-slate-700">毎朝 7:00</div>
+    </div>
+
+    <!-- Flow: 4 steps -->
+    <div class="flex flex-col gap-2">
+
+      <!-- Step 1: Trigger -->
+      <div class="p-3 bg-slate-50 rounded-lg border border-slate-200">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center shrink-0">
+            <svg class="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+          </div>
+          <div class="flex-1">
+            <div class="flex items-center justify-between">
+              <span class="text-sm font-semibold text-slate-900">トリガー</span>
+              <span class="text-xs px-2 py-0.5 bg-slate-200 rounded text-slate-600">GitHub Actions</span>
+            </div>
+            <p class="text-xs text-slate-500 mt-0.5">毎朝 7:00 JST（UTC 22:00）に自動起動</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex justify-center">
+        <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+        </svg>
+      </div>
+
+      <!-- Step 2: Fetch news -->
+      <div class="p-3 bg-emerald-50 rounded-lg border border-emerald-200">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-full bg-emerald-200 flex items-center justify-center shrink-0">
+            <svg class="w-4 h-4 text-emerald-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/>
+            </svg>
+          </div>
+          <div class="flex-1">
+            <div class="flex items-center justify-between">
+              <span class="text-sm font-semibold text-slate-900">ニュース取得</span>
+              <span class="text-xs px-2 py-0.5 bg-emerald-200 rounded text-emerald-700">Google News RSS</span>
+            </div>
+            <p class="text-xs text-slate-500 mt-0.5">不動産・住宅ローン・地価・REITなどのキーワードで検索</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex justify-center">
+        <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+        </svg>
+      </div>
+
+      <!-- Step 3: Summarize -->
+      <div class="p-3 bg-violet-50 rounded-lg border border-violet-200">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-full bg-violet-200 flex items-center justify-center shrink-0">
+            <svg class="w-4 h-4 text-violet-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+            </svg>
+          </div>
+          <div class="flex-1">
+            <div class="flex items-center justify-between">
+              <span class="text-sm font-semibold text-slate-900">AI 要約</span>
+              <span class="text-xs px-2 py-0.5 bg-violet-200 rounded text-violet-700">Claude API</span>
+            </div>
+            <p class="text-xs text-slate-500 mt-0.5">各記事を3行以内に要約。重要度順に10件まで絞り込み</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex justify-center">
+        <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+        </svg>
+      </div>
+
+      <!-- Step 4: Send email -->
+      <div class="p-3 bg-amber-50 rounded-lg border border-amber-200">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-full bg-amber-200 flex items-center justify-center shrink-0">
+            <svg class="w-4 h-4 text-amber-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+            </svg>
+          </div>
+          <div class="flex-1">
+            <div class="flex items-center justify-between">
+              <span class="text-sm font-semibold text-slate-900">メール送信</span>
+              <span class="text-xs px-2 py-0.5 bg-amber-200 rounded text-amber-700">Gmail SMTP</span>            </div>
+            <p class="text-xs text-slate-500 mt-0.5">HTMLメールを自分のGmailへ送信</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Secrets section -->
+    <div class="p-3 bg-slate-50 rounded-lg border border-slate-200">
+      <div class="flex items-center gap-1.5 mb-2">
+        <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/>
+        </svg>
+        <span class="text-xs font-semibold text-slate-600">GitHub Secrets（追加が必要なもの）</span>
+      </div>
+      <div class="grid grid-cols-2 gap-1.5">
+        <div class="flex items-center gap-1.5 px-2 py-1 bg-white rounded border border-slate-200">
+          <div class="w-1.5 h-1.5 rounded-full bg-violet-400 shrink-0"></div>
+          <span class="text-xs text-slate-700 font-mono">ANTHROPIC_API_KEY</span>
+        </div>
+        <div class="flex items-center gap-1.5 px-2 py-1 bg-white rounded border border-slate-200">
+          <div class="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0"></div>
+          <span class="text-xs text-slate-700 font-mono">GMAIL_USER</span>
+        </div>
+        <div class="flex items-center gap-1.5 px-2 py-1 bg-white rounded border border-slate-200">
+          <div class="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0"></div>
+          <span class="text-xs text-slate-700 font-mono">GMAIL_APP_PASSWORD</span>
+        </div>
+        <div class="flex items-center gap-1.5 px-2 py-1 bg-white rounded border border-slate-200">
+          <div class="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0"></div>
+          <span class="text-xs text-slate-700 font-mono">NEWS_TO_EMAIL</span>
+        </div>
+      </div>
+      <p class="text-xs text-slate-400 mt-1.5">※ ANTHROPIC_API_KEY は既存のものを流用</p>
+    </div>
+
+    <!-- Files section -->
+    <div class="p-3 bg-slate-50 rounded-lg border border-slate-200">
+      <div class="flex items-center gap-1.5 mb-2">
+        <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/>
+        </svg>
+        <span class="text-xs font-semibold text-slate-600">追加するファイル</span>
+      </div>
+      <div class="space-y-1">
+        <div class="flex items-center gap-2">
+          <div class="w-1.5 h-1.5 rounded-full bg-slate-400 shrink-0"></div>
+          <span class="text-xs text-slate-600 font-mono">.github/workflows/real-estate-news.yml</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <div class="w-1.5 h-1.5 rounded-full bg-slate-400 shrink-0"></div>
+          <span class="text-xs text-slate-600 font-mono">scripts/real-estate-news.js</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <div class="w-1.5 h-1.5 rounded-full bg-slate-400 shrink-0"></div>
+          <span class="text-xs text-slate-600 font-mono">configs/news/real-estate.yml</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="border-t border-slate-200 pt-2">
+      <div class="flex items-center justify-between">
+        <span class="text-xs text-slate-500">既存のコミットレポートとは独立して動作</span>
+        <div class="text-xs text-slate-400">commit-report-tool</div>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>
