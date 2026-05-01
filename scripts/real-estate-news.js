@@ -135,10 +135,13 @@ JSON以外は出力しないこと。`
   });
 
   const text = msg.content[0].text;
-  // コードブロック(```json ... ```)で囲まれていても取り出せるようにする
-  const stripped = text.replace(/```(?:json)?\s*/g, '').replace(/```/g, '');
-  const m = stripped.match(/\[[\s\S]*\]/);
-  if (!m) throw new Error('Claude returned no JSON: ' + text.slice(0, 200));
+
+  // コードブロック内のJSONを優先して取り出す
+  const codeBlock = text.match(/```(?:json)?\s*([\s\S]*?)```/);
+  const jsonText = codeBlock ? codeBlock[1] : text;
+
+  const m = jsonText.match(/\[[\s\S]*\]/);
+  if (!m) throw new Error('Claude returned no JSON: ' + jsonText.slice(0, 300));
   return JSON.parse(m[0]);
 }
 
