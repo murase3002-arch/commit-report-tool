@@ -136,13 +136,13 @@ JSON以外は出力しないこと。`
 
   const text = msg.content[0].text;
 
-  // コードブロック内のJSONを優先して取り出す
-  const codeBlock = text.match(/```(?:json)?\s*([\s\S]*?)```/);
-  const jsonText = codeBlock ? codeBlock[1] : text;
-
-  const m = jsonText.match(/\[[\s\S]*\]/);
-  if (!m) throw new Error('Claude returned no JSON: ' + jsonText.slice(0, 300));
-  return JSON.parse(m[0]);
+  // [ から ] を直接取り出す（コードブロック有無にかかわらず動く）
+  const start = text.indexOf('[');
+  const end = text.lastIndexOf(']');
+  if (start === -1 || end === -1 || start >= end) {
+    throw new Error('Claude returned no JSON array: ' + text.slice(0, 300));
+  }
+  return JSON.parse(text.slice(start, end + 1));
 }
 
 // --- HTML email ---
