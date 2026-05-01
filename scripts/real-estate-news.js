@@ -9,7 +9,9 @@ function loadConfig() {
   try {
     const fs = require('fs');
     const path = require('path');
-    const configPath = path.join(__dirname, '..', 'configs', 'news', 'real-estate.yml');
+    const configPath = process.env.NEWS_CONFIG
+      ? path.join(__dirname, '..', process.env.NEWS_CONFIG)
+      : path.join(__dirname, '..', 'configs', 'news', 'real-estate.yml');
     const text = fs.readFileSync(configPath, 'utf8');
 
     // Simple YAML list parser for the keywords array

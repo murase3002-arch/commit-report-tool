@@ -1,0 +1,18 @@
+# 投資ニュースメール設定
+
+email:
+  to: murase3002@gmail.com
+
+keywords:
+  - 株式市場 日経平均
+  - 米国株 ダウ ナスダック
+  - 投資信託 ETF
+  - FX 為替
+  - 仮想通貨 ビットコイン
+  - 金利 債券
+  - NISA iDeCo
+  - IPO 新規上場
+
+news:
+  max_articles: 5
+  per_keyword: 5
