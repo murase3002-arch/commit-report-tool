@@ -135,7 +135,9 @@ JSON以外は出力しないこと。`
   });
 
   const text = msg.content[0].text;
-  const m = text.match(/\[[\s\S]*\]/);
+  // コードブロック(```json ... ```)で囲まれていても取り出せるようにする
+  const stripped = text.replace(/```(?:json)?\s*/g, '').replace(/```/g, '');
+  const m = stripped.match(/\[[\s\S]*\]/);
   if (!m) throw new Error('Claude returned no JSON: ' + text.slice(0, 200));
   return JSON.parse(m[0]);
 }
