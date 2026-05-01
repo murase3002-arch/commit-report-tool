@@ -107,7 +107,7 @@ async function summarize(articles, maxArticles) {
 
   const msg = await client.messages.create({
     model: 'claude-haiku-4-5',
-    max_tokens: 2048,
+    max_tokens: 4096,
     messages: [{
       role: 'user',
       content: `以下は今日の不動産関連ニュース一覧です。
